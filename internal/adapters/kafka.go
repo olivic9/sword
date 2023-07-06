@@ -22,15 +22,17 @@ type Publisher interface {
 }
 
 func (k *KafkaService) ProduceMessage(message models.KafkaMessage, ctx context.Context, topic string) {
-
 	go func() {
 		messageBytes := new(bytes.Buffer)
+		if err := json.NewEncoder(messageBytes).Encode(message); err != nil {
+			logging.Logger.Error(ctx, exceptions.NewInternalHandledError(err.Error()), logging.Metadata{
+				Context: "Encoding Error",
+				Payload: message,
+			})
+			return
+		}
 
-		_ = json.NewEncoder(messageBytes).Encode(message)
-
-		err := k.kafkaProducer.Publish(topic, messageBytes.Bytes())
-
-		if err != nil {
+		if err := k.kafkaProducer.Publish(topic, messageBytes.Bytes()); err != nil {
 			logging.Logger.Error(ctx, exceptions.NewInternalHandledError(err.Error()), logging.Metadata{
 				Context: topic,
 				Payload: message,
