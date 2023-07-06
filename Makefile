@@ -65,10 +65,7 @@ docker/build/dev/api:
 	@echo 'Building api docker image...'
 	docker build -t sword-api -f .setup/build/Dockerfile
 
-## docker/run/api: run the cmd/api docker image THIS COMMAND IS NOT WORKING
-.PHONY: docker/run/api
-docker/run/api:
-	@docker run --rm -p 4600:4600 --network journey-negotiation_default journey-negotiation-bff
+
 
 # ==================================================================================== #
 # QUALITY CONTROL
